@@ -85,7 +85,7 @@ class PostgreSqlSwooleExtConnection extends Connection
             $result = $statement->execute($this->prepareBindings($bindings));
 
             $this->recordsHaveBeenModified(
-                ($count = $statement->affectedRows($result)) > 0
+                ($count = (int)$statement->affectedRows($result)) > 0
             );
 
             return $count;
