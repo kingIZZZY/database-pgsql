@@ -218,6 +218,8 @@ class PostgreSqlSwooleExtConnection extends Connection
         $statement = $this->pdo->prepare($query);
         if (! $statement) {
             \Hyperf\Utils\ApplicationContext::getContainer()->get('Hyperf\Contract\StdoutLoggerInterface')->critical(json_encode([
+                '$statement' => $statement,
+                '$statement->error' => $statement->error,
                 '$this->pdo' => $this->pdo,
                 '$this->pdo->error' => $this->pdo->error,
                 '$query' => $query,
