@@ -111,8 +111,8 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $result = $statement->execute($this->prepareBindings($bindings));
 
-            if ($result === false || ! empty($this->pdo->error)) {
-                throw new QueryException($query, [], new Exception($this->pdo->error));
+            if ($result === false || ! empty($this->pdo->error ?: $statement->error)) {
+                throw new QueryException($query, [], new Exception($this->pdo->error ?: $statement->error));
             }
 
             return $statement->fetchAll($this->fetchMode) ?: [];
@@ -156,7 +156,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
         $result = $statement->execute($bindings);
         if (! $result) {
-            throw new QueryException($query, [], new Exception($this->pdo->error));
+            throw new QueryException($query, [], new Exception($this->pdo->error ?: $statement->error));
         }
 
         return $statement->fetchAll(SW_PGSQL_ASSOC);
@@ -217,14 +217,7 @@ class PostgreSqlSwooleExtConnection extends Connection
 
         $statement = $this->pdo->prepare($query);
         if (! $statement) {
-            \Hyperf\Utils\ApplicationContext::getContainer()->get('Hyperf\Contract\StdoutLoggerInterface')->critical(json_encode([
-                '$statement' => $statement,
-                '$statement->error' => $statement->error,
-                '$this->pdo' => $this->pdo,
-                '$this->pdo->error' => $this->pdo->error,
-                '$query' => $query,
-            ]));
-            throw new QueryException($query, [], new Exception($this->pdo->error));
+            throw new QueryException($query, [], new Exception($this->pdo->error ?: $statement->error));
         }
 
         return $statement;
